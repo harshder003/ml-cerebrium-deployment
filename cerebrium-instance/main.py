@@ -5,20 +5,17 @@ import io
 import base64
 import logging
 import time
-from typing import Dict, Any, Union
+import psutil
+from typing import Dict, Any
 from model import ONNXModel, ImagePreprocessor
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Global model instance
-model = None
-preprocessor = None
-
-def init():
-    """Initialize the model when the container starts"""
-    global model, preprocessor
+# Initialize model at module level
+def initialize_model():
+    """Initialize model and preprocessor"""
     try:
         model_path = "mtailor_classifier.onnx"
         if not os.path.exists(model_path):
@@ -27,17 +24,16 @@ def init():
         model = ONNXModel(model_path)
         preprocessor = ImagePreprocessor()
         logger.info("Model loaded successfully")
-        
-        # Test model with dummy input
-        dummy_input = np.random.randn(1, 3, 224, 224).astype(np.float32)
-        test_output = model.predict(dummy_input)
-        logger.info(f"Model test successful, output shape: {test_output.shape}")
+        return model, preprocessor
         
     except Exception as e:
-        logger.error(f"Failed to initialize model: {str(e)}")
-        raise
+        logger.error(f"Model initialization error: {str(e)}")
+        raise e
 
-def predict(item: Dict[str, Any]) -> Dict[str, Any]:
+# Initialize at module import
+model, preprocessor = initialize_model()
+
+def predict(item):
     """
     Main prediction function called by Cerebrium
     
@@ -50,8 +46,17 @@ def predict(item: Dict[str, Any]) -> Dict[str, Any]:
     Returns:
         Dictionary with prediction results
     """
+    global model, preprocessor
+    
     try:
         start_time = time.time()
+        
+        # Check if model is initialized
+        if model is None or preprocessor is None:
+            return {
+                "error": "Model not initialized",
+                "status": "error"
+            }
         
         # Health check mode
         if item.get('test_mode', False):
@@ -133,9 +138,6 @@ def softmax(x: np.ndarray) -> np.ndarray:
 
 def run_health_check() -> Dict[str, Any]:
     """Run comprehensive health check"""
-    import time
-    import psutil
-    
     health_status = {
         "status": "healthy",
         "timestamp": time.time(),
