@@ -1,34 +1,39 @@
 [cerebrium.deployment]
 name = "mtailor-classifier"
-python_version = "3.9"
-cuda_version = "11.8"
-region = "us-east-1"
+python_version = "3.12"
+docker_base_image_url = "debian:bookworm-slim"
+disable_auth = false
+include = ['./*', 'main.py', 'cerebrium.toml']
+exclude = ['.*']
 
 [cerebrium.hardware]
-cpu = 2
-memory = 8.0
-gpu = "NVIDIA-A10G"
-gpu_count = 0
-
-[cerebrium.scaling]
-min_replicas = 0
-max_replicas = 10
-cooldown_period = 60
+cpu = 2.0
+memory = 12.0
+compute = "CPU"
 
 [cerebrium.build]
 predict_function_imports = [
-    "main:predict"
+    "main:run"
 ]
 dockerfile = "Dockerfile"
 
-[cerebrium.dependencies]
-pip = [
-    "torch>=1.9.0",
-    "torchvision>=0.10.0",
-    "onnx>=1.10.0",
-    "onnxruntime>=1.9.0",
-    "Pillow>=8.0.0",
-    "numpy>=1.21.0",
-    "requests>=2.25.0",
-    "psutil>=5.8.0"
-]
+[cerebrium.scaling]
+min_replicas = 0
+max_replicas = 5
+cooldown = 30
+replica_concurrency = 1
+response_grace_period = 900
+scaling_metric = "concurrency_utilization"
+scaling_target = 100
+scaling_buffer = 0
+roll_out_duration_seconds = 0
+
+[cerebrium.dependencies.pip]
+torch= ">=1.9.0"
+torchvision= ">=0.10.0"
+onnx = ">=1.10.0"
+onnxruntime = ">=1.9.0"
+Pillow = ">=8.0.0"
+numpy = ">=1.21.0"
+requests = ">=2.25.0"
+psutil = ">=5.8.0"
