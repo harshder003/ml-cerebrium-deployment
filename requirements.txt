@@ -1,0 +1,9 @@
+torch>=1.9.0
+torchvision>=0.10.0
+onnx>=1.10.0
+onnxruntime>=1.9.0
+Pillow>=8.0.0
+numpy>=1.21.0
+requests>=2.25.0
+psutil>=5.8.0
+cerebrium>=1.0.0
