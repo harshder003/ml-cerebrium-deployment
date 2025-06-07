@@ -1,6 +1,6 @@
 # Image Classification Model Deployment on Cerebrium
 
-This project demonstrates the deployment of a PyTorch-based image classification model on Cerebrium's serverless GPU platform using Docker containerization and ONNX optimization.
+This project demonstrates the deployment of a PyTorch-based image classification model on Cerebrium's serverless CPU platform using Docker containerization and ONNX optimization.
 
 ## Project Overview
 
