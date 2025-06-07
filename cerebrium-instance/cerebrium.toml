@@ -29,8 +29,6 @@ scaling_buffer = 0
 roll_out_duration_seconds = 0
 
 [cerebrium.dependencies.pip]
-torch= ">=1.9.0"
-torchvision= ">=0.10.0"
 onnx = ">=1.10.0"
 onnxruntime = ">=1.9.0"
 Pillow = ">=8.0.0"
