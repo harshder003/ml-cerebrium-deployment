@@ -94,6 +94,7 @@ The deployment uses Cerebrium's native function-based approach:
 ```bash
 # Convert PyTorch model to ONNX
 python convert_to_onnx.py
+```
 
 ### Deployment
 ```bash
